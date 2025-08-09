@@ -22,10 +22,8 @@ class EmiController extends Controller
 
     public function process()
     {
-        // Drop existing table
         DB::statement('DROP TABLE IF EXISTS emi_details');
 
-        // Get min and max dates
         $minDate = DB::table('loan_details')->min('first_payment_date');
         $maxDate = DB::table('loan_details')->max('last_payment_date');
 
@@ -38,7 +36,6 @@ class EmiController extends Controller
             $start->addMonth();
         }
 
-        // Create table query
         $sql = "CREATE TABLE emi_details (clientid INT";
         foreach ($months as $month) {
             $sql .= ", `$month` DECIMAL(10,2) DEFAULT 0.00";
@@ -46,7 +43,6 @@ class EmiController extends Controller
         $sql .= ")";
         DB::statement($sql);
 
-        // Process EMI values
         $loans = DB::table('loan_details')->get();
 
         foreach ($loans as $loan) {
